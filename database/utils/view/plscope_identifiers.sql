@@ -156,6 +156,15 @@ WITH
         last_value (
            CASE
               WHEN tree.type in ('PROCEDURE', 'FUNCTION') AND tree.path_len = 2  THEN
+                 tree.signature
+           END
+        ) IGNORE NULLS OVER (
+           PARTITION BY tree.owner, tree.object_name, tree.object_type
+           ORDER BY tree.line, tree.col, tree.path_len
+        ) AS procedure_signature,
+        last_value (
+           CASE
+              WHEN tree.type in ('PROCEDURE', 'FUNCTION') AND tree.path_len = 2  THEN
                  tree.name
            END
         ) IGNORE NULLS OVER (
